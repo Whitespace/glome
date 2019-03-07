@@ -1,25 +1,32 @@
-LXModel buildModel() {
-  // A three-dimensional grid model
-  return new GridModel3D();
+import heronarts.lx.model.*;
+
+LXModel buildGlome() {
+  return new Glome();
 }
 
-public static class GridModel3D extends LXModel {
+public static class Glome extends LXModel {
   
-  public final static int SIZE = 20;
-  public final static int SPACING = 10;
-  
-  public GridModel3D() {
+  public Glome() {
     super(new Fixture());
   }
   
   public static class Fixture extends LXAbstractFixture {
     Fixture() {
-      for (int z = 0; z < SIZE; ++z) {
-        for (int y = 0; y < SIZE; ++y) {
-          for (int x = 0; x < SIZE; ++x) {
-            addPoint(new LXPoint(x*SPACING, y*SPACING, z*SPACING));
-          }
+      try {
+        JSONObject file = applet.loadJSONObject("pixels2.json");
+        JSONArray panels = file.getJSONArray("Pixels");
+        for (int i = 0; i < panels.size(); ++i) {
+          JSONArray panel = panels.getJSONArray(i);
+            for (int j = 0; j < panel.size(); ++j) {
+              JSONObject pixel = panel.getJSONObject(j);
+              float x = pixel.getFloat("x");
+              float y = pixel.getFloat("y");
+              float z = pixel.getFloat("z");
+              addPoint(new LXPoint(x, y, z));
+            }
         }
+      } catch (NullPointerException x) {
+        println("Fuck my life");
       }
     }
   }

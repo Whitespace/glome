@@ -1,39 +1,66 @@
 /** 
- * By using LX Studio, you agree to the terms of the LX Studio Software
- * License and Distribution Agreement, available at: http://lx.studio/license
- *
- * Please note that the LX license is not open-source. The license
- * allows for free, non-commercial use.
- *
- * HERON ARTS MAKES NO WARRANTY, EXPRESS, IMPLIED, STATUTORY, OR
- * OTHERWISE, AND SPECIFICALLY DISCLAIMS ANY WARRANTY OF
- * MERCHANTABILITY, NON-INFRINGEMENT, OR FITNESS FOR A PARTICULAR
- * PURPOSE, WITH RESPECT TO THE SOFTWARE.
+ * Welcome to the Glome!
  */
 
-// ---------------------------------------------------------------------------
-//
-// Welcome to LX Studio! Getting started is easy...
-// 
-// (1) Quickly scan this file
-// (2) Look at "Model" to define your model
-// (3) Move on to "Patterns" to write your animations
-// 
-// ---------------------------------------------------------------------------
+// Global constants
+final static String PIXEL_FILE = "./data/pixels.json";
+final static boolean DOES_TOM_LOVE_CATS = true;
 
-// Reference to top-level LX instance
+// Static reference to applet
+static PApplet applet;
+
+// Internals
 heronarts.lx.studio.LXStudio lx;
+LXModel glome;
 
 void setup() {
   // Processing setup, constructs the window and the LX instance
   size(800, 720, P3D);
-  lx = new heronarts.lx.studio.LXStudio(this, buildModel(), MULTITHREADED);
+  applet = this;
+  glome = buildGlome();
+
+  lx = new heronarts.lx.studio.LXStudio(this, glome, MULTITHREADED);
   lx.ui.setResizable(RESIZABLE);
 }
 
+// https://github.com/heronarts/LXStudio/wiki/Mapping-Outputs
 void initialize(final heronarts.lx.studio.LXStudio lx, heronarts.lx.studio.LXStudio.UI ui) {
-  // Add custom components or output drivers here
-}
+  final String ARTNET_IP = "192.168.1.50";
+  try {
+    // Construct a new DatagramOutput object
+    LXDatagramOutput output = new LXDatagramOutput(lx);
+
+    // manually send each panel to the pixlite
+    //   each panel is either 468 or 390 pixels
+    //   DMX takes 512 bytes per universe
+    //   512/3 = RGB 170 pixels
+    // so split each panel into groups of 170 or fewer pixels, and send their colors on a single universe
+    // we do this by computing which pixels to send on each universe and creating a Datagram object, which will pull the colors for us
+    //
+    // we can just precompute everything and inline it
+    int currentPixelIndex = 0;
+    final int[] counts = {170,170,128,170,170,128,170,170,128,170,170,128,170,170,128,170,170,128,170,170,50,170,170,50,170,170,50,170,170,50};
+    for (int universeIndex = 0; universeIndex < counts.length; ++universeIndex) {
+      int count = counts[universeIndex];
+
+      // generate an array of length count with the pixel indices to send on this universe
+      int[] pixelIndices = new int[count];
+      for (int i = 0; i < count; ++i) {
+        pixelIndices[i] = i + currentPixelIndex;
+      }
+      ArtNetDatagram strip = new ArtNetDatagram(pixelIndices, universeIndex);
+      strip.setAddress(ARTNET_IP);
+      output.addDatagram(strip);
+
+      applet.println("[ArtNet] sending pixels " + currentPixelIndex + " through " + (currentPixelIndex + count) + " on universe " + universeIndex);
+      currentPixelIndex += count;
+    }
+
+    // Add the datagram output to the LX engine
+    lx.addOutput(output);
+  } catch (Exception x) {
+    x.printStackTrace();
+  }}
 
 void onUIReady(heronarts.lx.studio.LXStudio lx, heronarts.lx.studio.LXStudio.UI ui) {
   // Add custom UI components here
