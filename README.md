@@ -1,5 +1,10 @@
-LX Studio
+Glome & LX Studio
 ==
+A way to program the Glome with LX Studio!
+
+![Glome V2 UI](https://user-images.githubusercontent.com/3590/55431153-ce1f7b80-555d-11e9-8047-1027fadf770c.png)
+
+![Glome V1](https://user-images.githubusercontent.com/3590/55430532-5ac93a00-555c-11e9-8615-92f77e53ed16.jpeg)
 
 **BY DOWNLOADING OR USING THE LX STUDIO SOFTWARE OR ANY PART THEREOF, YOU AGREE TO THE TERMS AND CONDITIONS OF THE [LX STUDIO SOFTWARE LICENSE AND DISTRIBUTION AGREEMENT](http://lx.studio/license).**
 
