@@ -18,7 +18,13 @@ Please note that LX Studio is not open-source software. The license grants permi
 
 ### Getting Started ###
 
-LX Studio runs on top of Processing. [Download and install Processing &rarr;](https://processing.org/download/)
+LX Studio runs on top of Processing. [Download and install Processing &rarr;](https://processing.org/download/). 
+
+If you're on macOS:
+
+```sh
+$ brew cask install processing
+```
 
 Next, clone this project and open the LXStudio.pde project in Processing:
 ```
