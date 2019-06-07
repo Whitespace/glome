@@ -53,7 +53,7 @@ public class Ripple extends LXPattern {
 
     for (LXPoint p : model.points) {
       float distanceToCenter = dist(center.x, center.y, center.z, p.x, p.y, p.z);
-      float distanceToRadius = abs(distanceToCenter - radius);
+      float distanceToRadius = abs(distanceToCenter - radius + pulseThickness);
 
       if (distanceToRadius < pulseThickness) {
         float proximityToPulseCenter = distanceToRadius / pulseThickness;
