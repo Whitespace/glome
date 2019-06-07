@@ -27,7 +27,9 @@ public class Ripple extends LXPattern {
   }
 
   private final int black = LXColor.hsb(0, 0, 0);
-  
+  private float hue = random(360);
+  private float previous_t = 0;
+
   public void run(double deltaMs) {
     // constants
     float radiusFudgeFactor = 0.25; // radius is in global units, so we need to scale it so a pulse travels the whole glome in 1000ms at 1 speed by default
@@ -41,7 +43,13 @@ public class Ripple extends LXPattern {
     // computed values
     float t = millis() % pulseDuration;
     float radius = t * pulseSpeed * radiusFudgeFactor;
-    float pulseBrightness = 1 - t / pulseDuration; // should move from linear to http://gizma.com/easing/#quad3
+    float pulseBrightness = t / pulseDuration;
+    float easedPulseBrightness = 1 - pow(pulseBrightness, 3);
+
+    // new pulse detected
+    if (t < previous_t) {
+      hue = random(360);
+    }
 
     for (LXPoint p : model.points) {
       float distanceToCenter = dist(center.x, center.y, center.z, p.x, p.y, p.z);
@@ -49,12 +57,14 @@ public class Ripple extends LXPattern {
 
       if (distanceToRadius < pulseThickness) {
         float proximityToPulseCenter = distanceToRadius / pulseThickness;
-        float linearEasing = 1 - proximityToPulseCenter;
+        float easedPulseThickness = 1 - pow(proximityToPulseCenter, 3);
 
-        colors[p.index] = LXColor.hsb(0, 0, 100 * linearEasing * pulseBrightness);
+        colors[p.index] = LXColor.hsb(hue, 100, 100 * easedPulseThickness * easedPulseBrightness);
       } else {
         colors[p.index] = black;
       }
     }
+
+    previous_t = t;
   }
 }
