@@ -15,7 +15,7 @@ LXModel glome;
 
 void setup() {
   // Processing setup, constructs the window and the LX instance
-  size(800, 720, P3D);
+  size(1000, 800, P3D);
   applet = this;
   glome = buildGlome();
 
@@ -25,7 +25,7 @@ void setup() {
 
 // https://github.com/heronarts/LXStudio/wiki/Mapping-Outputs
 void initialize(final heronarts.lx.studio.LXStudio lx, heronarts.lx.studio.LXStudio.UI ui) {
-  final String ARTNET_IP = "192.168.1.50";
+  final String ARTNET_IP = "192.168.13.50";
   try {
     // Construct a new DatagramOutput object
     LXDatagramOutput output = new LXDatagramOutput(lx);
